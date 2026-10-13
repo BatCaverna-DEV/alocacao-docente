@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Alocação Docente — IFMA Coelho Neto</title>
+  </head>
+  <body>
+    <div id="app"></div>
+    <script>
+      // Aberto com duplo clique (file://)? O navegador bloqueia os módulos — mostra como iniciar.
+      if (location.protocol === 'file:') {
+        document.getElementById('app').innerHTML =
+          '<div style="font-family:sans-serif;max-width:640px;margin:4rem auto;line-height:1.5">' +
+          '<h2>Esta página não abre direto do arquivo</h2>' +
+          '<p>Dê dois cliques em <b>iniciar.bat</b> (na raiz do projeto) ou rode <code>npm start</code> ' +
+          'e acesse <a href="http://localhost:3000">http://localhost:3000</a>.</p></div>'
+      }
+    </script>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>

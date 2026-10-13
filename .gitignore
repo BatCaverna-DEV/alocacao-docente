@@ -1,0 +1,37 @@
+# Dependências
+node_modules/
+
+# Build do front-end (gerado por `npm run build`, servido pelo Express)
+frontend/dist/
+
+# Dados da aplicação (criados automaticamente a partir do seed na primeira execução)
+backend/data/*
+!backend/data/.gitkeep
+# Local de dados da versão anterior
+/data/
+
+# Variáveis de ambiente
+.env
+.env.*
+!.env.example
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+
+# Cache de ferramentas
+.vite/
+.cache/
+coverage/
+
+# IDEs e editores
+.idea/
+.vscode/*
+!.vscode/extensions.json
+*.swp
+
+# Sistema operacional
+.DS_Store
+Thumbs.db
+desktop.ini

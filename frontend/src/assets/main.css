@@ -1,0 +1,18 @@
+body { background: #f5f6f8; }
+.table-sm td, .table-sm th { vertical-align: middle; }
+.num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.select-prof { min-width: 220px; }
+.sticky-card { position: sticky; top: 1rem; }
+.catalogo-lista { max-height: 60vh; overflow-y: auto; }
+
+/* Planilha de atribuição */
+.planilha { font-size: 0.9rem; }
+.planilha th, .planilha td { vertical-align: middle; }
+.planilha .col-disc { position: sticky; left: 0; background: #fff; z-index: 1; min-width: 260px; }
+.planilha thead .col-disc { background: #f8f9fa; z-index: 2; }
+.planilha .col-prof { width: 92px; min-width: 92px; text-align: center; }
+.planilha .col-prof .form-check-input { width: 1.2rem; height: 1.2rem; cursor: pointer; }
+.planilha td.marcado { background: #e7f1ff; }
+.planilha tr.sem-prof .col-disc { box-shadow: inset 3px 0 0 #ffc107; }
+.planilha .cab-prof { line-height: 1.15; font-weight: 600; white-space: normal; }
+.planilha tfoot td { font-weight: 600; background: #f8f9fa; }
