@@ -45,6 +45,8 @@
       </BCol>
     </BRow>
 
+    <GraficoCargaMedia />
+
     <h5 class="mb-2">Visão geral por semestre</h5>
     <p class="small text-muted">Aulas semanais de cada professor em todos os semestres cadastrados.</p>
     <div class="table-responsive">
@@ -82,6 +84,7 @@
 <script setup>
 import { computed } from 'vue'
 import { BRow, BCol, BCard, BBadge } from 'bootstrap-vue-next'
+import GraficoCargaMedia from '../components/GraficoCargaMedia.vue'
 import { state, discById, cursoById, cargaPorProfessor, situacao, fmt } from '../stores/alocacao.js'
 
 const carga = computed(() => cargaPorProfessor(state.semestreAtual))
