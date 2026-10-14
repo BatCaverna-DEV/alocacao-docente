@@ -10,6 +10,6 @@ export default defineConfig({
   server: {
     port: 5173,
     // Em desenvolvimento, as chamadas /api vão para o backend (porta 3000)
-    proxy: { '/api': 'http://localhost:3000' }
+    proxy: { '/api': process.env.API_URL || 'http://localhost:3000' }
   }
 })
