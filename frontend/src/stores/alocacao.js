@@ -100,6 +100,8 @@ export const acoes = {
   criarProfessor: dados => acao(() => api.post('/api/professores', dados)),
   atualizarProfessor: (id, dados) => acao(() => api.put(`/api/professores/${id}`, dados)),
   excluirProfessor: id => acao(() => api.del(`/api/professores/${id}`)),
+  criarCurso: dados => acao(() => api.post('/api/cursos', dados)),
+  excluirCurso: id => acao(() => api.del(`/api/cursos/${id}`)),
   criarDisciplina: dados => acao(() => api.post('/api/disciplinas', dados)),
   excluirDisciplina: id => acao(() => api.del(`/api/disciplinas/${id}`)),
   sugestaoSemestre: () => api.get('/api/semestres/sugestao')

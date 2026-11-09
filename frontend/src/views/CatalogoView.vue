@@ -2,13 +2,21 @@
   <BRow class="g-3">
     <BCol lg="8">
       <BCard v-for="curso in state.cursos" :key="curso.id" no-body class="mb-3">
-        <div class="card-header d-flex justify-content-between">
+        <div class="card-header d-flex justify-content-between align-items-center gap-2">
           <strong>{{ rotuloCurso(curso) }}</strong>
-          <span class="small text-muted">
-            {{ curso.regime === 'anual' ? 'Anual · aulas = CH ÷ 40' : 'Semestral · aulas = CH ÷ 15' }}
+          <span class="small text-muted ms-auto">
+            {{ curso.regime === 'anual' ? 'Anual' : 'Semestral' }} · aulas = CH ÷ {{ curso.divisor }}
           </span>
+          <BButton
+            v-if="!disciplinasDo(curso.id).length"
+            size="sm" variant="link" class="text-danger p-0" title="Excluir curso"
+            @click="excluirCurso(curso)"
+          >✕</BButton>
         </div>
-        <div class="table-responsive">
+        <p v-if="!disciplinasDo(curso.id).length" class="small text-muted m-3">
+          Nenhuma disciplina cadastrada. Use o formulário "Nova disciplina" para incluir.
+        </p>
+        <div v-else class="table-responsive">
           <table class="table table-sm mb-0">
             <thead class="table-light">
               <tr>
@@ -72,6 +80,35 @@
           <BButton type="submit" variant="primary" class="w-100">Adicionar ao catálogo</BButton>
         </BForm>
       </BCard>
+
+      <BCard header="Novo curso" header-class="fw-semibold" class="mt-3">
+        <BForm @submit.prevent="adicionarCurso">
+          <BFormGroup label="Nome" label-for="nc-nome" class="mb-2">
+            <BFormInput id="nc-nome" v-model="novoCurso.nome" required placeholder="ex.: Técnico em Informática" />
+          </BFormGroup>
+          <BFormGroup label="PPC / resolução" label-for="nc-ppc" class="mb-2">
+            <BFormInput id="nc-ppc" v-model="novoCurso.ppc" placeholder="ex.: PPC 2026" />
+          </BFormGroup>
+          <BRow class="g-2 mb-2">
+            <BCol>
+              <BFormGroup label="Nível" label-for="nc-nivel">
+                <BFormSelect id="nc-nivel" v-model="novoCurso.nivel" :options="niveis" @update:model-value="ajustarRegime" />
+              </BFormGroup>
+            </BCol>
+            <BCol>
+              <BFormGroup label="Regime" label-for="nc-regime">
+                <BFormSelect id="nc-regime" v-model="novoCurso.regime" :options="regimes" />
+              </BFormGroup>
+            </BCol>
+          </BRow>
+          <p class="small text-muted mb-3">
+            {{ novoCurso.nivel === 'tecnico'
+              ? 'CH em hora-aula; aulas semanais = CH ÷ 40.'
+              : 'CH em horas; aulas semanais = CH ÷ 15.' }}
+          </p>
+          <BButton type="submit" variant="primary" class="w-100">Adicionar curso</BButton>
+        </BForm>
+      </BCard>
     </BCol>
   </BRow>
 </template>
@@ -109,6 +146,34 @@ async function adicionar () {
     `${nova.nome} adicionada ao catálogo.`
   )
   if (ok) { nova.nome = ''; nova.periodo = '' }
+}
+
+// ---------- cursos ----------
+const novoCurso = reactive({ nome: '', ppc: '', nivel: 'superior', regime: 'semestral' })
+const niveis = [
+  { value: 'superior', text: 'Superior' },
+  { value: 'tecnico', text: 'Técnico' }
+]
+const regimes = [
+  { value: 'semestral', text: 'Semestral' },
+  { value: 'anual', text: 'Anual' }
+]
+const ajustarRegime = nivel => { novoCurso.regime = nivel === 'tecnico' ? 'anual' : 'semestral' }
+
+async function adicionarCurso () {
+  const nome = novoCurso.nome
+  const ok = await executar(() => acoes.criarCurso({ ...novoCurso }), `Curso ${nome} cadastrado.`)
+  if (ok) {
+    nova.cursoId = state.cursos.at(-1)?.id || nova.cursoId
+    novoCurso.nome = ''
+    novoCurso.ppc = ''
+  }
+}
+
+async function excluirCurso (curso) {
+  if (!window.confirm(`Excluir o curso "${rotuloCurso(curso)}"?`)) return
+  const ok = await executar(() => acoes.excluirCurso(curso.id), 'Curso excluído.')
+  if (ok && nova.cursoId === curso.id) nova.cursoId = state.cursos[0]?.id
 }
 
 async function excluir (d) {

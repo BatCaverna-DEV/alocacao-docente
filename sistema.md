@@ -55,7 +55,7 @@ Padrão em camadas **routes → controller → model → database**. Os models v
 - Os dados ficam inteiramente em memória e são gravados no arquivo a cada alteração (`save()`), com escrita atômica (grava em `.tmp` e renomeia).
 - Na primeira execução, se o arquivo não existir, o banco é criado a partir de `seedData.js` (cursos, disciplinas dos PPCs, 6 professores e o semestre `2027.1`).
 - Migração automática: se existir `data/db.json` na raiz do projeto (versão anterior) e não existir o arquivo novo, ele é copiado.
-- IDs sequenciais por contador em `seq` (`prof`, `disc`, `oferta`).
+- IDs sequenciais por contador em `seq` (`curso`, `prof`, `disc`, `oferta`).
 
 Variáveis de ambiente:
 
@@ -72,11 +72,11 @@ Estrutura raiz do `db.json`:
 { "versao": 1, "cursos": [], "disciplinas": [], "professores": [], "semestres": [], "ofertas": [], "seq": {} }
 ```
 
-**Curso** (fixo, vem do seed)
+**Curso** (seed + cadastrados pela interface)
 
 | Campo   | Descrição |
 |---------|-----------|
-| `id`    | `ads2025`, `ads2023`, `adm`, `tds`, `aut` |
+| `id`    | `ads2025`, `ads2023`, `adm`, `tds`, `aut` (seed) ou `cN` (cadastrado) |
 | `nome`, `ppc` | Nome do curso e PPC/resolução |
 | `nivel` | `superior` ou `tecnico` |
 | `regime`| `semestral` ou `anual` |
@@ -123,6 +123,7 @@ Cursos cadastrados: ADS (PPC 2025), ADS (PPC 2023), Bacharelado em Administraç�
 - **Exclusões**:
   - Semestre: remove também todas as suas ofertas.
   - Professor: as ofertas atribuídas a ele ficam sem professor.
+  - Curso: somente se não tiver disciplinas no catálogo (409 caso contrário).
   - Disciplina: apenas personalizadas e somente se não estiver ofertada em nenhum semestre (409 caso contrário).
 - **Situação da carga** (calculada no front-end): acima de `maxAulas` → "Acima do limite"; abaixo de `minAulas` → "Abaixo do mínimo"; caso contrário → "Dentro da faixa".
 
@@ -132,6 +133,9 @@ Cursos cadastrados: ADS (PPC 2025), ADS (PPC 2023), Bacharelado em Administraç�
 |--------|------|-----------|
 | GET | `/estado` | Retorna cursos, disciplinas, professores, semestres e ofertas em uma única resposta |
 | GET | `/backup` | Download do arquivo de dados completo (`alocacao-docente-backup.json`) |
+| GET | `/cursos` | Lista cursos |
+| POST | `/cursos` | Cria curso `{ nome, ppc, nivel, regime }` (unidade e divisor derivados do nível) |
+| DELETE | `/cursos/:id` | Exclui curso sem disciplinas |
 | GET | `/professores` | Lista professores |
 | POST | `/professores` | Cria professor `{ nome, minAulas, maxAulas }` |
 | PUT | `/professores/:id` | Atualiza campos informados |
@@ -203,6 +207,7 @@ Funções auxiliares: `cargaPorProfessor(semestreId)`, `situacao(aulas, prof)`, 
 **Catálogo de disciplinas** (`/catalogo`)
 - Disciplinas de cada curso por período, com CH, aulas semanais e selos "TCC/Extensão" e "personalizada".
 - Formulário para incluir disciplina personalizada com prévia do cálculo de aulas; exclusão apenas das personalizadas.
+- Formulário "Novo curso" (nome, PPC, nível e regime); cursos sem disciplinas podem ser excluídos.
 
 ## 5. Execução
 
@@ -233,4 +238,4 @@ npm run build
 
 - O `frontend/index.html` orienta o usuário a usar `iniciar.bat` ou `npm start` na raiz do projeto, mas esses arquivos ainda não existem na raiz do repositório atual.
 - Não há testes automatizados, autenticação nem controle de concorrência: o sistema assume um único usuário/instância gravando no arquivo JSON.
-- Cursos não podem ser cadastrados pela interface; são definidos em `backend/models/seedData.js`.
+- Os cursos iniciais vêm de `backend/models/seedData.js`; novos cursos podem ser cadastrados na aba Catálogo.
